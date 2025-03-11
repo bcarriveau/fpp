@@ -54,11 +54,12 @@ int main(int argc, char* argv[]) {
     int lt = getRawSettingInt("LEDDisplayType", 7);
     if (!OLEDPage::InitializeDisplay(lt)) {
         lt = 0;
-    } else {
-        OLEDPage::displayBootingNotice();
     }
     int count = 0;
     if (argc > 1) {
+        if (lt != 0) {
+            OLEDPage::displayBootingNotice("FPP - File Systems");
+        }
         if (strcmp(argv[1], "clear") == 0) {
             unlink("/home/fpp/media/tmp/cape_detect_done");
             while (FileExists("/home/fpp/media/tmp/cape_detect_done") && count < 100) {
@@ -66,8 +67,14 @@ int main(int argc, char* argv[]) {
                 unlink("/home/fpp/media/tmp/cape_detect_done");
                 count++;
             }
+            if (FileExists("/home/fpp/media/tmp/cape-image.xbm")) {
+                CopyFileContents("/home/fpp/media/tmp/cape-image.xbm", "/tmp/cape-image.xbm");
+            }
             return 0;
         }
+    }
+    if (lt != 0) {
+        OLEDPage::displayBootingNotice("FPP - Cape Detection");
     }
     count = 0;
     bool capeDetectionDone = FileExists("/home/fpp/media/tmp/cape_detect_done");

@@ -361,9 +361,11 @@ function list_plugin_entries($menu)
                                 <? if (($settings['fppMode'] == 'player') || ($uiLevel >= 1)) { ?>
                                     <a class="dropdown-item" href="scheduler.php"><i class="fas fa-clock"></i> Scheduler</a>
                                 <? } ?>
+                                <? if ($uiLevel >= 1) { ?>
                                 <a class="dropdown-item" href="scriptbrowser.php"><i class="fas fa-scroll"></i> Script
                                     Repository
                                     Browser</a>
+                                <? } ?>
                                 <a class="dropdown-item" href="plugins.php"><i class="fas fa-puzzle-piece"></i> Plugin
                                     Manager</a>
                                 <? if ($uiLevel >= 2) { ?>
@@ -385,9 +387,11 @@ function list_plugin_entries($menu)
                                         style="color:red;"></i> Channel Inputs</a>
                                 <a class="dropdown-item" href="channeloutputs.php"><i class="fas fa-project-diagram"
                                         style="color:green;"></i> Channel Outputs</a>
+                                <? if ($uiLevel >= 1) { ?>
                                 <a class="dropdown-item" href="outputprocessors.php"><i class="fas fa-microchip"></i>
                                     Output
                                     Processors</a>
+                                <? } ?>
                                 <a class="dropdown-item" href="pixeloverlaymodels.php"><i class="fas fa-cubes"></i>
                                     Pixel Overlay
                                     Models</a>
@@ -419,23 +423,7 @@ function list_plugin_entries($menu)
                                     $externalLinkClass = "hiddenExternalLink";
                                 }
                                 ?>
-                                <a class="<?= $externalLinkClass ?> link-to-fpp-manual"
-                                    href="https://added-by-javascript.net" target="_blank" rel="noopener noreferrer"><i
-                                        class="fas fa-book"></i>
-                                    FPP Manual <i class="fas fa-external-link-alt external-link"></i></a>
-                                <a class="<?= $externalLinkClass ?>" href="https://falconchristmas.com/forum"
-                                    target="_blank" rel="noopener noreferrer"><i class="fas fa-comments"></i> Forums <i
-                                        class="fas fa-external-link-alt external-link"></i></a>
-                                <a class="<?= $externalLinkClass ?>"
-                                    href="https://github.com/FalconChristmas/fpp/issues" target="_blank"
-                                    rel="noopener noreferrer"><i class="fas fa-bug"></i> Issue Tracker <i
-                                        class="fas fa-external-link-alt external-link"></i></a>
-                                <a class="dropdown-item" href="help.php"><i class="fas fa-question-circle"></i> Help
-                                    Index</a>
-                                <a class="dropdown-item" href="apihelp.php"><i class="fas fa-plug"></i> REST API
-                                    Help</a>
-                                <a class="dropdown-item" href="commandhelp.php"><i class="fas fa-cubes"></i> FPP
-                                    Commands Help</a>
+                                <a class="dropdown-item" href="help.php"><i class="fas fa-question-circle"></i> Get Help</a>
                                 <a class="dropdown-item" href="credits.php"><i class="fas fa-stream"></i> Credits</a>
                                 <a class="<?= $externalLinkClass ?>"
                                     href="https://www.paypal.com/donate/?hosted_button_id=ASF9XYZ2V2F5G" target='_blank'

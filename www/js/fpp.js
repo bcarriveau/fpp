@@ -3405,8 +3405,10 @@ function IPOutputTypeChanged (item, input) {
 			var monitor = $(item).parent().parent().find('input.txtMonitor');
 			if (type == 0 || type == 2) {
 				monitor.prop('disabled', true);
+				$('#sourceInterfaceDiv').show();
 			} else {
 				monitor.prop('disabled', false);
+				//$('#sourceInterfaceDiv').hide();
 			}
 
 			var universe = $(item).parent().parent().find('input.txtUniverse');
@@ -3458,6 +3460,7 @@ function populateUniverseData (data, reload, input) {
 		}
 	}
 	UniverseCount = channelData.universes.length;
+	var hasMCBC = false;
 	for (var i = 0; i < channelData.universes.length; i++) {
 		var universe = channelData.universes[i];
 		var active = universe.active;
@@ -3506,6 +3509,7 @@ function populateUniverseData (data, reload, input) {
 		}
 		if (type == 0 || type == 2) {
 			monitorDisabled = ' disabled';
+			hasMCBC = true;
 		}
 		var minNum = 1;
 		if (type == 2 || type == 3) {
@@ -3670,6 +3674,11 @@ function populateUniverseData (data, reload, input) {
 	$('#tblUniversesBody').html(bodyHTML);
 
 	$('#txtUniverseCount').val(UniverseCount);
+	if (hasMCBC) {
+		$('#sourceInterfaceDiv').show();
+	} else {
+		$('#sourceInterfaceDiv').hide();
+	}
 
 	SetUniverseInputNames(); // in co-universes.php
 }
@@ -6657,27 +6666,35 @@ function SetupSelectableTableRow (info) {
 }
 
 function DialogOK (title, message) {
-	DoModalDialog({
-		id: 'dialogOKPopup',
-		title: title,
-		body: message,
-		class: 'modal-sm',
-		keyboard: true,
-		backdrop: true,
-		buttons: {
-			Close: {
-				click: function () {
-					CloseModalDialog('dialogOKPopup');
-				},
-				class: 'btn-success'
-			}
-		}
-	});
+    DoModalDialog({
+        id: 'dialogOKPopup',
+        title: title,
+        body: message,
+        class: 'modal-sm',
+        keyboard: true,
+        backdrop: true,
+        buttons: {
+            Close: {
+                click: function () {
+                    CloseModalDialog('dialogOKPopup');
+                },
+                class: 'btn-success'
+            }
+        },
+        open: function() {
+            $('#dialogOKPopup').css('z-index', 1060);
+            $('.modal-backdrop').last().css('z-index', 1059);
+        },
+        close: function() {
+            $('.modal-backdrop').remove(); // Remove lingering backdrop
+            $('body').removeClass('modal-open').css('padding-right', ''); // Reset body state
+        }
+    });
 }
 
 // Simple wrapper for now, but we may highlight this somehow later
 function DialogError (title, message) {
-	DialogOK(title, message);
+    DialogOK(title, message);
 }
 
 // page visibility prefixing
