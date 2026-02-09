@@ -63,7 +63,8 @@ BBB48StringOutput::BBB48StringOutput(unsigned int startChannel,
     m_pruData(NULL),
     m_pru0(NULL),
     m_pru0Data(NULL),
-    m_stallCount(0) {
+    m_stallCount(0),
+    m_inTestMode(false) {
     LogDebug(VB_CHANNELOUT, "BBB48StringOutput::BBB48StringOutput(%u, %u)\n",
              startChannel, channelCount);
 }
@@ -572,7 +573,7 @@ void BBB48StringOutput::OverlayTestData(unsigned char* channelData, int cycleNum
     m_testCycle = cycleNum;
     m_testType = testType;
     m_testPercent = percentOfCycle;
-
+    m_inTestMode = true;
     // We won't overlay the data here because we could have multiple strings
     // pointing at the same channel range so a per-port test cannot
     // be done via channel ranges.  We'll record the test information and use
@@ -600,14 +601,25 @@ void BBB48StringOutput::prepData(FrameData& d, unsigned char* channelData) {
             ps = m_strings[idx];
             c = out + s;
             uint32_t newLen = ps->m_outputChannels;
-            uint8_t* d = tester
-                             ? tester->createTestData(ps, m_testCycle, m_testPercent, channelData, newLen)
-                             : ps->prepareOutput(channelData);
+            uint8_t* dPtr;
+
+            if (tester || m_inTestMode) {
+                // Test mode: generate logical RGB → apply color order remap via prepareOutput
+                dPtr = tester
+                           ? tester->createTestData(ps, m_testCycle, m_testPercent, channelData, newLen)
+                           : ps->prepareOutput(channelData);
+            } else {
+                // Normal sACN / sequence playback: incoming data already in physical byte order
+                // → skip remapping, just copy raw bytes
+                dPtr = channelData + (ps->m_startChannel - 1);  // 1-based → 0-based offset
+                newLen = ps->m_outputChannels;
+            }
+
             newMaxLen = std::max(newLen, newMaxLen);
             for (int p = 0; p < newLen; p++) {
-                *c = *d;
+                *c = *dPtr;
                 c += numStrings;
-                ++d;
+                ++dPtr;
             }
         }
     }
@@ -646,6 +658,7 @@ void BBB48StringOutput::PrepData(unsigned char* channelData) {
     prepData(m_gpioData, channelData);
     prepData(m_gpio0Data, channelData);
     m_testCycle = -1;
+    m_inTestMode = false;
 }
 
 void BBB48StringOutput::sendData(FrameData& d, uint32_t* dptr) {

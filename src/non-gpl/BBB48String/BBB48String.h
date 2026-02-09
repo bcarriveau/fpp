@@ -86,6 +86,7 @@ private:
     int m_testCycle = -1;
     int m_testType = 0;
     float m_testPercent = 0.0f;
+    bool m_inTestMode = false;
     std::list<std::string> m_autoCreatedModelNames;
 
     void prepData(FrameData& d, unsigned char* channelData);
